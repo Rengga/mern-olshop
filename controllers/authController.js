@@ -21,10 +21,9 @@ const createSendResToken = (user, statusCode, res) => {
 
   user.password = undefined;
 
-  res.status(statusCode),
-    json({
-      data: user,
-    });
+  res.status(statusCode).json({
+    data: user,
+  });
 };
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -38,4 +37,25 @@ export const registerUser = asyncHandler(async (req, res) => {
     role: role,
   });
   createSendResToken(createUser, 201, res);
+});
+
+export const loginUser = asyncHandler(async (req, res) => {
+  //validasi
+  if (!req.body.email || !req.body.password) {
+    res.status(400);
+    throw new Error("email/password tidak boleh kosong");
+  }
+
+  //cek email ada didatabse atau tidak
+  const userData = await User.findOne({
+    email: req.body.email,
+  });
+
+  //cek password
+  if (userData && (await userData.comparePasswordnya(req.body.password))) {
+    createSendResToken(userData, 200, res);
+  } else {
+    res.status(400);
+    throw new Error("invalid user");
+  }
 });
