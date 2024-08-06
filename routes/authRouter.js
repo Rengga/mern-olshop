@@ -1,7 +1,8 @@
 import express from "express";
 // import User from "../models/userModel.js";
 // import asyncHandler from "../middlewares/asyncHandler.js";
-import { registerUser, loginUser } from "../controllers/authController.js";
+import { registerUser, loginUser, getCurrentUser, logoutUser } from "../controllers/authController.js";
+import { protectedMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -12,13 +13,9 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 
 //post /api/v1/auth/logout
-router.get("/logout", (reg, res) => {
-  res.send("logout");
-});
+router.get("/logout", protectedMiddleware, logoutUser);
 
 //post /api/v1/auth/getUser
-router.get("/getUser", (reg, res) => {
-  res.send("getUser");
-});
+router.get("/getUser", protectedMiddleware, getCurrentUser);
 
 export default router;

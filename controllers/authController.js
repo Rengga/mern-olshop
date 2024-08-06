@@ -59,3 +59,26 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new Error("invalid user");
   }
 });
+
+export const getCurrentUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select("-password");
+
+  if (user) {
+    return res.status(200).json({
+      user,
+    });
+  } else {
+    res.status(404);
+    throw new Error("user not found");
+  }
+});
+
+export const logoutUser = async (req, res) => {
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+  res.status(200).json({
+    message: "logout berhasil",
+  });
+};
